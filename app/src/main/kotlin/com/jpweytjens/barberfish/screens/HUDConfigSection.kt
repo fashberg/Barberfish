@@ -74,6 +74,8 @@ import com.jpweytjens.barberfish.extension.HUDSlotConfig
 import com.jpweytjens.barberfish.extension.HUDSlotField
 import com.jpweytjens.barberfish.extension.PowerSmoothingStream
 import com.jpweytjens.barberfish.extension.ElevationSimplification
+import com.jpweytjens.barberfish.extension.PositionIndicatorColor
+import com.jpweytjens.barberfish.extension.PositionIndicatorStyle
 import com.jpweytjens.barberfish.extension.SparklineConfig
 import com.jpweytjens.barberfish.extension.ElevationZoom
 import com.jpweytjens.barberfish.extension.SparklineWarp
@@ -308,6 +310,8 @@ private fun HUDPreview(
                 showClimbs      = sparklineConfig.showClimbs,
                 poiDistances    = poiDistances,
                 showPois        = sparklineConfig.showPois,
+                dotColor        = sparklineConfig.positionColor.argb,
+                positionStyle   = sparklineConfig.positionStyle,
             )
             displayedRange = newRange
             bitmap
@@ -506,6 +510,7 @@ private fun HUDSlotFieldCard(
                 HUDSlotField.Grade -> {}
                 is HUDSlotField.Time -> {}
                 is HUDSlotField.ETA -> {}
+                HUDSlotField.DistanceToDestination -> {}
             }
             if (slot.field == HUDSlotField.Power || slot.field == HUDSlotField.AvgPower ||
                 slot.field == HUDSlotField.NP || slot.field == HUDSlotField.LapPower ||
@@ -542,6 +547,7 @@ private fun HUDFieldTypeDropdown(slot: HUDSlotConfig, onUpdate: (HUDSlotConfig) 
             HUDSlotField.Grade -> "Grade"
             is HUDSlotField.Time -> f.kind.label.replace("\n", " ")
             is HUDSlotField.ETA -> f.kind.label.replace("\n", " ")
+            HUDSlotField.DistanceToDestination -> "Distance left"
         }
     var expanded by remember { mutableStateOf(false) }
     ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
@@ -585,9 +591,10 @@ private fun HUDFieldTypeDropdown(slot: HUDSlotConfig, onUpdate: (HUDSlotConfig) 
                     "Last lap time" to HUDSlotField.Time(TimeKind.LAST_LAP),
                 ),
                 "Navigation" to listOf(
-                    "Remaining ride time" to HUDSlotField.ETA(ETAKind.REMAINING_RIDE_TIME),
-                    "To destination" to HUDSlotField.ETA(ETAKind.TIME_TO_DESTINATION),
+                    "Moving time left" to HUDSlotField.ETA(ETAKind.REMAINING_RIDE_TIME),
+                    "Total time left" to HUDSlotField.ETA(ETAKind.TIME_TO_DESTINATION),
                     "ETA" to HUDSlotField.ETA(ETAKind.TIME_OF_ARRIVAL),
+                    "Distance left" to HUDSlotField.DistanceToDestination,
                 ),
                 "Daylight" to listOf(
                     "Sunrise" to HUDSlotField.Time(TimeKind.TIME_TO_SUNRISE),
@@ -770,6 +777,19 @@ internal fun SparklineCard(
                 options = listOf(false to "Off", true to "On"),
                 selected = config.showPois,
                 onSelect = { onUpdate(config.copy(showPois = it)) },
+            )
+            Text("POSITION", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = TextDark)
+            Text("Shape of the current position indicator.", fontSize = 12.sp, color = TextDark)
+            SegmentedRow(
+                options = PositionIndicatorStyle.entries.map { it to it.label },
+                selected = config.positionStyle,
+                onSelect = { onUpdate(config.copy(positionStyle = it)) },
+            )
+            Text("Color of the current position indicator.", fontSize = 12.sp, color = TextDark)
+            SegmentedRow(
+                options = PositionIndicatorColor.entries.map { it to it.label },
+                selected = config.positionColor,
+                onSelect = { onUpdate(config.copy(positionColor = it)) },
             )
         }
     }

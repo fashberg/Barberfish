@@ -270,6 +270,15 @@ class HUDField(private val karooSystem: KarooSystemService) :
                 }.flatMapLatest { (etaCfg, timeCfg) ->
                     ETAField.streamFlow(karooSystem, slot.field.kind, etaCfg, timeCfg.format)
                 }
+            HUDSlotField.DistanceToDestination ->
+                karooSystem.streamUserProfile().flatMapLatest { profile ->
+                    combine(
+                        karooSystem.streamDataFlow(DataType.Type.DISTANCE_TO_DESTINATION),
+                        karooSystem.streamDataFlow(DataType.Type.DISTANCE),
+                    ) { destState, distState ->
+                        DistanceToDestinationField.toFieldState(destState, distState, profile)
+                    }
+                }
         }
 
     companion object {
@@ -312,6 +321,8 @@ class HUDField(private val karooSystem: KarooSystemService) :
                     TimeField.previewStates(timeCfg, field.kind)
                 is HUDSlotField.ETA ->
                     ETAField.previewStates(field.kind, timeCfg.format)
+                HUDSlotField.DistanceToDestination ->
+                    DistanceToDestinationField.previewStates(profile)
             }
             val l = slot(hudConfig.leftSlot)
             val m = slot(hudConfig.middleSlot)

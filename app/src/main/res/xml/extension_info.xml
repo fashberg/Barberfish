@@ -153,6 +153,12 @@
         description="@string/time_of_arrival_description"
         graphical="true" />
     <DataType
+        icon="@drawable/ic_time_to_dest"
+        typeId="distance-to-destination"
+        displayName="@string/distance_to_destination_name"
+        description="@string/distance_to_destination_description"
+        graphical="true" />
+    <DataType
         icon="@drawable/ic_sunrise"
         typeId="time-to-sunrise"
         displayName="@string/time_to_sunrise_name"

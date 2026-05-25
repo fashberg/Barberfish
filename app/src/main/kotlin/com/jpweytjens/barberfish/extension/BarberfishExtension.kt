@@ -2,6 +2,7 @@ package com.jpweytjens.barberfish.extension
 
 import com.jpweytjens.barberfish.BuildConfig
 import com.jpweytjens.barberfish.datatype.AvgHRField
+import com.jpweytjens.barberfish.datatype.DistanceToDestinationField
 import com.jpweytjens.barberfish.datatype.AvgPowerField
 import com.jpweytjens.barberfish.datatype.AvgSpeedField
 import com.jpweytjens.barberfish.datatype.CadenceField
@@ -59,6 +60,7 @@ class BarberfishExtension : KarooExtension("barberfish", BuildConfig.VERSION_NAM
             ETAField(karooSystem, ETAKind.REMAINING_RIDE_TIME),
             ETAField(karooSystem, ETAKind.TIME_TO_DESTINATION),
             ETAField(karooSystem, ETAKind.TIME_OF_ARRIVAL),
+            DistanceToDestinationField(karooSystem),
             TimeField(karooSystem, TimeKind.TIME_TO_SUNRISE),
             TimeField(karooSystem, TimeKind.TIME_TO_SUNSET),
             TimeField(karooSystem, TimeKind.TIME_TO_CIVIL_DAWN),

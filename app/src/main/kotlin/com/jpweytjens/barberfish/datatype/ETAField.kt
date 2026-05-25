@@ -28,8 +28,8 @@ import kotlinx.coroutines.flow.runningFold
 import java.util.Calendar
 
 enum class ETAKind(val typeId: String, val label: String, val iconRes: Int) {
-    REMAINING_RIDE_TIME("remaining-ride-time", "Ride\nTime", R.drawable.ic_time_to_dest),
-    TIME_TO_DESTINATION("time-to-destination", "To\nDest", R.drawable.ic_time_to_dest),
+    REMAINING_RIDE_TIME("remaining-ride-time", "Move\nLeft", R.drawable.ic_time_to_dest),
+    TIME_TO_DESTINATION("time-to-destination", "Time\nLeft", R.drawable.ic_time_to_dest),
     TIME_OF_ARRIVAL("time-of-arrival", "ETA", R.drawable.ic_time_to_dest),
 }
 
@@ -98,8 +98,27 @@ class ETAField(
                     updateETAState(input, state) to raw
                 }
                 .map { (state, raw) ->
-                    if (raw == null || raw.distToDestM == null) {
+                    if (raw == null) {
                         return@map FieldState.unavailable(kind.label, kind.iconRes)
+                    }
+
+                    if (raw.distToDestM == null) {
+                        return@map when (kind) {
+                            ETAKind.REMAINING_RIDE_TIME -> FieldState(
+                                primary = formatTime((raw.elapsedMs / 1000.0).toLong(), format),
+                                label = "Move\nDone",
+                                color = FieldColor.Default,
+                                iconRes = kind.iconRes,
+                            )
+                            ETAKind.TIME_TO_DESTINATION -> FieldState(
+                                primary = formatTime(((raw.elapsedMs + raw.pausedMs) / 1000.0).toLong(), format),
+                                label = "Time\nDone",
+                                color = FieldColor.Default,
+                                iconRes = kind.iconRes,
+                            )
+                            ETAKind.TIME_OF_ARRIVAL ->
+                                FieldState.unavailable(kind.label, kind.iconRes)
+                        }
                     }
 
                     val input = ETAInput(

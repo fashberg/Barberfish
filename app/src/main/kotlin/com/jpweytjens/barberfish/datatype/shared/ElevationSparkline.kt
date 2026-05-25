@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import androidx.compose.ui.graphics.toArgb
 import com.jpweytjens.barberfish.extension.GradePalette
+import com.jpweytjens.barberfish.extension.PositionIndicatorStyle
 
 // Elevation polyline: Google Encoded Polyline, precision=1 (divisor=10),
 // lat = cumulative distance in metres, lng = elevation in metres.
@@ -172,6 +173,7 @@ internal fun renderElevationSparkline(
     showClimbs: Boolean = false,
     poiDistances: List<Float> = emptyList(),
     showPois: Boolean = false,
+    positionStyle: PositionIndicatorStyle = PositionIndicatorStyle.DOT,
 ): ElevationSparklineResult {
     if (elevationPoints.isEmpty()) return ElevationSparklineResult(null, displayedRange)
 
@@ -406,14 +408,22 @@ internal fun renderElevationSparkline(
         }
     }
 
-    // 5. Position dot — matches POI markers in size and outline so they share visual weight.
-    paint.style = Paint.Style.FILL
-    paint.color = dotColor
-    canvas.drawCircle(dotX, dotY, DOT_RADIUS_PX, paint)
-    paint.style = Paint.Style.STROKE
-    paint.strokeWidth = MARKER_STROKE_PX
-    paint.color = if (isNightMode) android.graphics.Color.BLACK else android.graphics.Color.WHITE
-    canvas.drawCircle(dotX, dotY, DOT_RADIUS_PX, paint)
+    // 5. Position indicator — dot or vertical line.
+    if (positionStyle == PositionIndicatorStyle.LINE) {
+        paint.style = Paint.Style.STROKE
+        paint.strokeWidth = 2f
+        paint.color = dotColor
+        canvas.drawLine(dotX, 0f, dotX, heightPx.toFloat(), paint)
+    } else {
+        // Dot — matches POI markers in size and outline so they share visual weight.
+        paint.style = Paint.Style.FILL
+        paint.color = dotColor
+        canvas.drawCircle(dotX, dotY, DOT_RADIUS_PX, paint)
+        paint.style = Paint.Style.STROKE
+        paint.strokeWidth = MARKER_STROKE_PX
+        paint.color = if (isNightMode) android.graphics.Color.BLACK else android.graphics.Color.WHITE
+        canvas.drawCircle(dotX, dotY, DOT_RADIUS_PX, paint)
+    }
 
     return ElevationSparklineResult(bitmap, newDisplayedRange)
 }

@@ -91,6 +91,8 @@ sealed interface HUDSlotField {
     @Serializable data class Time(val kind: TimeKind = TimeKind.TOTAL) : HUDSlotField
 
     @Serializable data class ETA(val kind: ETAKind = ETAKind.TIME_TO_DESTINATION) : HUDSlotField
+
+    @Serializable data object DistanceToDestination : HUDSlotField
 }
 
 @Serializable
@@ -128,6 +130,21 @@ enum class ElevationZoom(val label: String, val minRangeM: Float) {
 }
 
 @Serializable
+enum class PositionIndicatorStyle(val label: String) {
+    DOT("Dot"),
+    LINE("Line"),
+}
+
+@Serializable
+enum class PositionIndicatorColor(val label: String, val argb: Int) {
+    TEAL("Teal", 0xFF31E09A.toInt()),
+    RED("Red", 0xFFFC292B.toInt()),
+    YELLOW("Yellow", 0xFFFFFF00.toInt()),
+    ORANGE("Orange", 0xFFFF9500.toInt()),
+    BLUE("Blue", 0xFF2086D8.toInt()),
+}
+
+@Serializable
 data class SparklineConfig(
     val enabled: Boolean = true,
     val lookaheadKm: Int = 5,
@@ -138,6 +155,8 @@ data class SparklineConfig(
     val yZoom: ElevationZoom = ElevationZoom.NORMAL,
     val showClimbs: Boolean = true,
     val showPois: Boolean = true,
+    val positionStyle: PositionIndicatorStyle = PositionIndicatorStyle.DOT,
+    val positionColor: PositionIndicatorColor = PositionIndicatorColor.TEAL,
 )
 
 @Serializable

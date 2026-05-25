@@ -117,7 +117,7 @@ internal fun sparklineBitmapFlow(
             val dotColor = when {
                 isOffRoute -> KAROO_REJOIN_RED.toArgb()
                 dest != null -> KAROO_DESTINATION_PURPLE.toArgb()
-                else -> ICON_TINT_TEAL.toArgb()
+                else -> sparkCfg.positionColor.argb
             }
             val distanceDeltaM = (positionM - lastPositionM).coerceAtLeast(0f)
             lastPositionM = positionM
@@ -161,6 +161,7 @@ internal fun sparklineBitmapFlow(
                     showClimbs = sparkCfg.showClimbs,
                     poiDistances = poiDistances,
                     showPois = sparkCfg.showPois,
+                    positionStyle = sparkCfg.positionStyle,
                 )
             else ElevationSparklineResult(null, ratchetRange)
             ratchetRange = updatedRange
