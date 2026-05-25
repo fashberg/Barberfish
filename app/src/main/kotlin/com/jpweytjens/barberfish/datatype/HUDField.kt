@@ -133,6 +133,7 @@ class HUDField(private val karooSystem: KarooSystemService) :
                             intent,
                             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
                         )
+                        rv.setOnClickPendingIntent(R.id.hud_root, pi)
                         rv.setOnClickPendingIntent(R.id.hud_sparkline_container, pi)
                     }
                     rv
