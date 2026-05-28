@@ -410,10 +410,24 @@ internal fun renderElevationSparkline(
 
     // 5. Position indicator — dot or vertical line.
     if (positionStyle == PositionIndicatorStyle.LINE) {
+        // Line is 3px wide, shifted 0.5px left so the left edge moves 1px further left
+        // while the right edge stays at dotX+1 (same as the old 2px centered line).
+        val lineX = dotX - 0.5f
         paint.style = Paint.Style.STROKE
-        paint.strokeWidth = 2f
+        paint.strokeWidth = 3f
         paint.color = dotColor
-        canvas.drawLine(dotX, 0f, dotX, heightPx.toFloat(), paint)
+        canvas.drawLine(lineX, 0f, lineX, heightPx.toFloat(), paint)
+        // Downward-pointing arrow at the top of the line.
+        val arrowHalfW = 6f
+        val arrowH = 20f
+        paint.style = Paint.Style.FILL
+        val arrowPath = android.graphics.Path().apply {
+            moveTo(lineX - arrowHalfW, 0f)
+            lineTo(lineX + arrowHalfW, 0f)
+            lineTo(lineX, arrowH)
+            close()
+        }
+        canvas.drawPath(arrowPath, paint)
     } else {
         // Dot — matches POI markers in size and outline so they share visual weight.
         paint.style = Paint.Style.FILL
